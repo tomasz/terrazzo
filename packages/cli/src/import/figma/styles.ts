@@ -4,11 +4,11 @@ import type {
   Node,
   PublishedStyle,
   Style,
+  TypeStyle,
 } from '@figma/rest-api-spec';
 import type {
   ColorValue,
   DimensionToken,
-  DimensionValue,
   GradientValue,
   Logger,
   NumberToken,
@@ -235,7 +235,7 @@ export function gridStyles(
     }
     values[pattern] = {
       sectionSize: { $type: 'dimension', $value: { value: grid.sectionSize, unit: 'px' } },
-      gutterSize: { $type: 'dimension', $value: { value: grid.sectionSize, unit: 'px' } },
+      gutterSize: { $type: 'dimension', $value: { value: grid.gutterSize, unit: 'px' } },
     };
     if (grid.count > 0) {
       values[pattern].count = { $type: 'number', $value: grid.count };
@@ -250,21 +250,32 @@ export function textStyle(node: Node): TypographyValue | undefined {
     return;
   }
 
-  let lineHeight: string | number | DimensionValue = 1;
-  if ('lineHeightPercentFontSize' in node.style) {
-    lineHeight = node.style.lineHeightPercentFontSize!;
-  } else if ('lineHeightPx' in node.style) {
-    lineHeight = { value: node.style.lineHeightPx!, unit: 'px' };
+  const { style } = node;
+  if (!style.fontFamily || !Number.isFinite(style.fontWeight) || !Number.isFinite(style.fontSize)) {
+    return;
   }
 
-  return {
-    fontFamily: [node.style.fontFamily!],
-    fontWeight: node.style.fontWeight,
-    fontStyle: node.style.fontStyle,
-    fontSize: node.style.fontSize
-      ? { value: node.style.fontSize, unit: 'px' }
-      : { value: 1, unit: 'em' },
-    letterSpacing: { value: node.style.letterSpacing ?? 0, unit: 'px' },
-    lineHeight,
+  const typography: TypographyValue = {
+    fontFamily: style.fontFamily.split(',').map((family) => family.trim()),
+    fontWeight: style.fontWeight!,
+    fontStyle: style.fontStyle,
+    fontSize: { value: style.fontSize!, unit: 'px' },
+    letterSpacing: { value: style.letterSpacing || 0, unit: 'px' },
+    lineHeight: getLineHeight(style),
   };
+
+  return typography;
+}
+
+function getLineHeight(style: TypeStyle): number {
+  if (style.lineHeightUnit === 'FONT_SIZE_%' && Number.isFinite(style.lineHeightPercentFontSize)) {
+    return style.lineHeightPercentFontSize! / 100;
+  }
+  if (Number.isFinite(style.lineHeightPx) && style.fontSize) {
+    return style.lineHeightPx! / style.fontSize;
+  }
+  if (Number.isFinite(style.lineHeightPercentFontSize)) {
+    return style.lineHeightPercentFontSize! / 100;
+  }
+  return 1;
 }
