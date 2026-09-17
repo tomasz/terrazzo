@@ -122,13 +122,15 @@ The group will only show the `grid`, `rows`, or `columns` subgroups if they appe
 
 #### String and Boolean types
 
-DTCG does not allow string types, but these are a dominant typeof Figma Variable, especially in typography. In order to override certain Variables by name, pass in `--[type]-names` flags:
+DTCG does not allow string types, but these are a dominant type of Figma Variable, especially in typography. To override certain Variables by name, pass `--[type]-names` flags:
 
 ```sh
 npx tz import [file] \
-    --font-family-names ".*/(family|fontName}$" \
+    --font-family-names ".*/(family|fontName)$" \
     --font-weight-names ".*/weight$" \
-    --number-names ".*/lineHeight$"
+    --number-float-names ".*/lineHeight$" \
+    --duration-names ".*/duration$" \
+    --cubic-bezier-names ".*/easing$"
 ```
 
 The flags are RegEx patterns, so passing in a string will return any match. You can also use slashes to get more specific with token targets.
@@ -147,12 +149,15 @@ If the file has nothing published, it will grab Styles and Variables in the file
 
 You can add all the following flags to `tz import`:
 
-| Name                           | Description                                                                                                              |
-| :----------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `--output [file]`, `-o [file]` | File to export. If this is omitted, it will output to stdout.                                                            |
-| `--unpublished`                | Pulls unpublished Variables and Styles (by default the most recent Published Library will be used).                      |
-| `--skip-styles`                | Don’t import Styles from this file.                                                                                      |
-| `--skip-variables`             | Don’t import Variables from this file (required if not on the Enterprise Plan).                                          |
-| `--font-family-names [regex]`  | Import these names as [fontFamily](/docs/reference/tokens/#font-family) tokens. Accepts RegEx. (default: `/fontFamily$`) |
-| `--font-weight-names [regex]`  | Import these names as [fontWeight](/docs/reference/tokens/#font-weight) tokens. Accepts RegEx. (default: `/fontWeight$`) |
-| `--number-names [regex]`       | Import these names as [number](/docs/reference/tokens/#number) tokens. Accepts RegEx. (default: undefined)               |
+| Name                           | Description                                                                                                                                                           |
+| :----------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--output [file]`, `-o [file]` | File to export. If this is omitted, it will output to stdout.                                                                                                         |
+| `--unpublished`                | Pulls unpublished Variables and Styles (by default the most recent Published Library will be used).                                                                   |
+| `--skip-styles`                | Don’t import Styles from this file.                                                                                                                                   |
+| `--skip-variables`             | Don’t import Variables from this file (required if not on the Enterprise Plan).                                                                                       |
+| `--font-family-names [regex]`  | Imports matching `STRING` Variables as [fontFamily](/docs/reference/tokens/#font-family) tokens. (default: `/fontFamily$`)                                            |
+| `--font-weight-names [regex]`  | Imports matching `FLOAT` or `STRING` Variables as [fontWeight](/docs/reference/tokens/#font-weight) tokens from 1–1000 or a supported name. (default: `/fontWeight$`) |
+| `--number-names [regex]`       | Coerces matching primitive Variables to finite [number](/docs/reference/tokens/#number) tokens and leaves invalid values unchanged. Deprecated.                       |
+| `--number-float-names [regex]` | Imports matching `FLOAT` Variables as [number](/docs/reference/tokens/#number) tokens.                                                                                |
+| `--duration-names [regex]`     | Imports matching `STRING` Variables as [duration](/docs/reference/tokens/#duration) tokens using signed `ms` or `s` values.                                           |
+| `--cubic-bezier-names [regex]` | Imports matching `STRING` Variables as [cubicBezier](/docs/reference/tokens/#cubic-bezier) tokens using CSS `cubic-bezier()` syntax.                                  |

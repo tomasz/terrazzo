@@ -21,8 +21,14 @@ export interface importFromFigmaOptions {
   fontFamilyNames?: string;
   /** RegEx for overriding Variable types with fontWeight tokens */
   fontWeightNames?: string;
-  /** RegEx for overriding Variable types with number tokens */
+  /** @deprecated RegEx for coercing matching primitive Variables with Number(). */
   numberNames?: string;
+  /** RegEx for overriding FLOAT Variable types with number tokens */
+  numberFloatNames?: string;
+  /** RegEx for overriding STRING Variable types with duration tokens */
+  durationNames?: string;
+  /** RegEx for overriding STRING Variable types with cubicBezier tokens */
+  cubicBezierNames?: string;
   /** Explicit Resolver order to preserve. By default, imported groups are listed in discovery order. */
   resolutionOrder?: readonly FigmaResolutionOrderEntry[];
 }
@@ -43,6 +49,9 @@ export async function importFromFigma({
   fontFamilyNames = '/fontFamily$',
   fontWeightNames = '/fontWeight$',
   numberNames,
+  numberFloatNames,
+  durationNames,
+  cubicBezierNames,
   resolutionOrder,
 }: importFromFigmaOptions): Promise<FigmaOutput> {
   const fileKey = getFileID(url);
@@ -75,9 +84,12 @@ export async function importFromFigma({
               logger,
               unpublished,
               matchers: {
+                cubicBezier: cubicBezierNames ? new RegExp(cubicBezierNames) : undefined,
+                duration: durationNames ? new RegExp(durationNames) : undefined,
                 fontFamily: fontFamilyNames ? new RegExp(fontFamilyNames) : undefined,
                 fontWeight: fontWeightNames ? new RegExp(fontWeightNames) : undefined,
                 number: numberNames ? new RegExp(numberNames) : undefined,
+                numberFloat: numberFloatNames ? new RegExp(numberFloatNames) : undefined,
               },
             }),
           ]),
