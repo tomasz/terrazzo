@@ -159,11 +159,11 @@ A font weight as defined in [DTCG 8.4](https://www.designtokens.org/tr/2025.10/f
 }
 ```
 
-| Property       | Type     | Description                                                                                                                           |
-| :------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| `$type`        | `string` | **Required.** `"fontWeight"`                                                                                                          |
-| `$value`       | `number` | **Required.** Either a font weight number `1` (lightest)–`1000` (heaviest), or an [approved alias](#aliases) of a font weight number. |
-| `$description` | `string` | (Optional) A description of this token and its intended usage.                                                                        |
+| Property       | Type               | Description                                                                                                                           |
+| :------------- | :----------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `$type`        | `string`           | **Required.** `"fontWeight"`                                                                                                          |
+| `$value`       | `number \| string` | **Required.** Either a font weight number `1` (lightest)–`1000` (heaviest), or an [approved alias](#aliases) of a font weight number. |
+| `$description` | `string`           | (Optional) A description of this token and its intended usage.                                                                        |
 
 ### Aliases
 
